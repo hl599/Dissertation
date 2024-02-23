@@ -1,27 +1,25 @@
 * Set the working directory
 cd "C:/Users/liu/Desktop/Empirics/Raw data"
-preserve
 tempfile temp1
 *------------------------------------*
 * Convert province names into code id
 *------------------------------------*
 
 * Change this into ASIF_combined.dta
-use "sample.dta", clear
 use "province_concordance.dta", clear
-merge 1:m 省自治区直辖市 using "sample.dta"
+merge 1:m 省自治区直辖市 using "ASIF_combined.dta"
 drop _merge
 drop 省自治区直辖市
 drop if missing(dq)
 * It should not lose any data
-save temp1
+save `temp1'
 
 *------------------------------------*
 * Convert type and equity value into ownership
 *------------------------------------*
 * Convert the chinese names into type code
 use "ownership_concordance.dta", clear
-merge 1:m 登记注册类型 using temp1
+merge 1:m 登记注册类型 using `temp1'
 drop _merge
 drop 登记注册类型
 drop if missing(type)
@@ -68,4 +66,3 @@ tostring bdat, replace
 reshape wide cic bdat fa_original ownership dq, i(firm) j(year)
 
 save "output01-02.dta", replace
-restore

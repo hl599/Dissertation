@@ -45,7 +45,6 @@ save `tempdata'
 
 
 *------------------------------------*
-**# Problem 1
 * merge with real capital data
 *------------------------------------*
 use "output02-03", clear
@@ -66,15 +65,22 @@ drop if missing(dq)
 *------------------------------------*
 * rename variables accordingly
 *------------------------------------*
+rename firm firm_id
+* Generate firm as a string
+egen firm = group(firm_id)
 
 rename 工业总产值_当年价格千元 output
 rename 其中出口交货值千元 export
 rename 全部从业人员年平均人数人 employment
+replace employment = 年末从业人员合计人 if missing(employment)
 rename 工业中间投入合计千元 input
 rename 应付工资薪酬总额千元 wage
 gen nonwage = 应付福利费总额千元 + 劳动失业保险费千元
 rename dq province
+for var output export employment input nonwage wage real_cap: drop if X < 0
+
+
 save "output03-05.dta", replace
 
-keep firm year output export employment input wage ownership province real_cap cic_adj
+keep firm year output export employment input nonwage wage ownership province real_cap cic_adj 
 save "output03-04.dta", replace
